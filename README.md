@@ -29,3 +29,6 @@ A randomized simulation of life and death for a population, where the strong pro
 
 ### Tic-Tac-Toe in Python
 A simple 2 player game of Tic-Tac-Toe using user input.
+
+### Word Search in Ruby
+A script that contains a 2d array board of letters and word bank. It finds those words and outputs where they are.
