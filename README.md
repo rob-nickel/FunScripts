@@ -8,23 +8,13 @@ A randomized simulation of life and death for a population, where the strong pro
 > Round | # of Beings | Average Speed | Average Strength
 > ---|---|---|---
 > 1 | 50 | 53 | 50
->    Round:*
->    Alive:--------------------------------------------------
->    Speed:-----------------------------------------------------
-> Strength:--------------------------------------------------
->                                                                                 
-> 2 | 55 | 56 | 60
->    Round:**
->    Alive:-------------------------------------------------------
->    Speed:--------------------------------------------------------
-> Strength:------------------------------------------------------------
->                                                                                 
+> 2 | ![#c5f015](https://placehold.co/15x15/006400/006400.png) 55 | ![#c5f015](https://placehold.co/15x15/006400/006400.png) 56 | ![#c5f015](https://placehold.co/15x15/006400/006400.png) 60  
+
 > HURRICANE - 18% of beings killed, and 58% of beings affected by 30%.
-> 3 | 53 | 55 | 57
->    Round:***
->    Alive:-----------------------------------------------------
->    Speed:-------------------------------------------------------
-> Strength:---------------------------------------------------------
+
+> Round | # of Beings | Average Speed | Average Strength
+> ---|---|---|---
+> 3 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 53 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 55 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 57
 
 
 ### Tic-Tac-Toe in Python
