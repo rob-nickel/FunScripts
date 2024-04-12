@@ -16,6 +16,54 @@ A randomized simulation of life and death for a population, where the strong pro
 > ---|---|---|---
 > 3 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 53 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 55 | ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) 57
 
+### Worm in Python
+A race between a breadth-first-search and a depth-first-search to find the food in a 10x10 grid. Winner is outputted in green.
+Sample run:
+> Start: 95 and Finish: 67
+
+> ![#c5f015](https://placehold.co/15x15/006400/006400.png) DFS: [95, 85, 86, 87, 88, 78, 77, 76, 75, 74, 84, 83, 82, 81, 71, 72, 73, 63, 64, 65, 66, 67]
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXOOOOWXX
+
+> XOOOOOOOOX
+
+> XOOOOOOOOX
+
+> XXXXXOXXXX
+
+> ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) BFS: [95, 85, 75, 65, 66, 67]
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXXXXXX
+
+> XXXXXOOWXX
+
+> XXXXXOXXXX
+
+> XXXXXOXXXX
+
+> XXXXXOXXXX
 
 ### Tic-Tac-Toe in Python
 A simple 2 player game of Tic-Tac-Toe using user input.
