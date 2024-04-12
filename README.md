@@ -22,48 +22,30 @@ Sample run:
 > Start: 95 and Finish: 67
 
 > ![#c5f015](https://placehold.co/15x15/006400/006400.png) DFS: [95, 85, 86, 87, 88, 78, 77, 76, 75, 74, 84, 83, 82, 81, 71, 72, 73, 63, 64, 65, 66, 67]
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXOOOOWXX
-
-> XOOOOOOOOX
-
-> XOOOOOOOOX
-
-> XXXXXOXXXX
+> |X|X|X|X|X|X|X|X|X|X|
+> |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|O|O|O|O|W|X|X|
+> |X|O|O|O|O|O|O|O|O|X|
+> |X|O|O|O|O|O|O|O|O|X|
+> |X|X|X|X|X|O|X|X|X|X|
 
 > ![#f03c15](https://placehold.co/15x15/8B0000/8B0000.png) BFS: [95, 85, 75, 65, 66, 67]
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXXXXXX
-
-> XXXXXOOWXX
-
-> XXXXXOXXXX
-
-> XXXXXOXXXX
-
-> XXXXXOXXXX
+> |X|X|X|X|X|X|X|X|X|X|
+> |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|X|X|X|X|X|
+> |X|X|X|X|X|O|O|W|X|X|
+> |X|X|X|X|X|O|X|X|X|X|
+> |X|X|X|X|X|O|X|X|X|X|
+> |X|X|X|X|X|O|X|X|X|X|
 
 ### Tic-Tac-Toe in Python
 A simple 2 player game of Tic-Tac-Toe using user input.
