@@ -12,7 +12,12 @@ def output():
     print()
     for i in range(0,3):
         for j in range(0,3):
-            print(str(board[j][i]), end=" ")
+            if str(board[j][i]) == 'X':
+                print('\033[1;32m' + 'X' + '\033[0m',end=' ')
+            elif str(board[j][i]) == 'O':
+                print('\033[1;34m' + 'O' + '\033[0m',end=' ')
+            else:
+                print(str(board[j][i]),end=" ")
             if j < 2:
                 print("|", end=" ")
         print("")
