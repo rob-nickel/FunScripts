@@ -47,6 +47,9 @@ Sample run:
 > |X|X|X|X|X|O|X|X|X|X|
 > |X|X|X|X|X|O|X|X|X|X|
 
+### Connect 4 in Golang
+A 2 player game of Connect 4 using user input.
+
 ### Tic-Tac-Toe in Python
 A simple 2 player game of Tic-Tac-Toe using user input.
 
