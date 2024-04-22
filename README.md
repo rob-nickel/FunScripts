@@ -50,6 +50,9 @@ Sample run:
 ### Connect 4 in Go
 A 2 player game of Connect 4 using user input.
 
+### Connect 4 in Python vs the Computer
+A 1 player game of Connect 4 against the computer.
+
 ### Tic-Tac-Toe in Python
 A simple 2 player game of Tic-Tac-Toe using user input.
 
