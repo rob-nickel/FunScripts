@@ -39,7 +39,6 @@ def is_winning_piece(board, row, col):
 
 def print_board(board):
     """Prints the current state of the Connect 4 board, highlighting the winning pieces."""
-    print()
     for row in range(len(board)):
         for col in range(len(board[0])):
             piece = board[row][col]
