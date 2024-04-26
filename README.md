@@ -3,6 +3,9 @@
 
 The first line of each file should indicate how to run it from the command line.
 
+### Chess in Python
+A functional 2 player chess game using pygame
+
 ### Life Simulation in Ruby
 A randomized simulation of life and death for a population, where the strong prosper and disasters devastate. Here are a few sample output rounds:
 > Round | # of Beings | Average Speed | Average Strength
