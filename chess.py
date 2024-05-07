@@ -38,17 +38,17 @@ def get_king_location(board, color):
                 return (y, x)
     return None
 def would_king_be_under_attack(board, from_location, to_location, color):
-    print(f"Under Attack?? {color} {from_location} {to_location}")
     if from_location is None or to_location is None or color is None:
         return False
     current_piece = board[from_location[0]][from_location[1]]
     moving_king = False
+    if current_piece == None:
+        return False
     if current_piece.kind == "king":
         moving_king = True
-        king_location = current_piece.current
+        king_location = to_location
     else:
         king_location = get_king_location(board, color)
-
     for x in range(8):
         for y in range(8):
             if (y, x) == from_location or (y, x) == to_location:
@@ -56,22 +56,14 @@ def would_king_be_under_attack(board, from_location, to_location, color):
             piece = board[y][x]  # Assuming your board has pieces
             if piece == None:
                 continue
-            if piece.kind == "king" :
-                continue
             if piece.color != color: 
-                seen_squares = piece.get_seen_squares(board)
-                print(f"seen squares: {seen_squares}")
-                if moving_king and seen_squares and (to_location) in seen_squares:
-                    print(f"Killed by {piece.kind} at {piece.current}")
+                fake_board = [row[:] for row in board]
+                fake_board[to_location[0]][to_location[1]] = fake_board[from_location[0]][from_location[1]]
+                fake_board[from_location[0]][from_location[1]] = None
+                seen_squares = piece.get_seen_squares(fake_board)
+                if seen_squares and king_location in seen_squares:
+                    print(f"King killed by {piece.kind} at {piece.current}")
                     return True
-                if not moving_king:
-                    fake_board = [row[:] for row in board]
-                    fake_board[to_location[0]][to_location[1]] = fake_board[from_location[0]][from_location[1]]
-                    fake_board[from_location[0]][from_location[1]] = None
-                    seen_squares = piece.get_seen_squares(fake_board)
-                    if seen_squares and king_location in seen_squares:
-                        print(f"King killed by {piece.kind} at {piece.current}")
-                        return True
     return False
 class Color(Enum):
     BLACK = "b"
@@ -131,15 +123,13 @@ class King(Piece):
         valid_moves = self.get_possible_moves(board)
         moves_to_remove = []
         y, x = self.current
-        print(f"{valid_moves} and ({y}, {x})")
         
         if valid_moves:
             for move in valid_moves:
-                print(f"Trying move {move}. Valid_moves at this point: {valid_moves} length: {len(valid_moves)} and abs = {abs(move[1] - x)}")
                 if would_king_be_under_attack(board, self.current, move, self.color):
                     moves_to_remove.append(move)
                 elif abs(move[1] - x) == 2:
-                    print("Checking castle location.")
+                    # Castle locations
                     if move[1] == 2:
                         if would_king_be_under_attack(board, self.current, (y, 3), self.color):
                             moves_to_remove.append(move)
@@ -207,7 +197,6 @@ class Queen(Piece):
         return self.get_seen_squares(board)
     def get_valid_moves(self, board):
         valid_moves = self.get_possible_moves(board)
-        print(f"Quee's moves: {valid_moves}")
         moves_to_remove = []
         if valid_moves:
             for move in valid_moves:
@@ -216,7 +205,6 @@ class Queen(Piece):
         if moves_to_remove:
             for move in moves_to_remove:
                 valid_moves.remove(move)
-        
         #print(f"Quee's moves: {valid_moves}")
         return valid_moves
 class Rook(Piece):
@@ -336,11 +324,16 @@ class Bishop(Piece):
         # print(f"Bish's moves: {valid_moves}")
         return valid_moves
 class Pawn(Piece):
-    def __init__(self, color, start):
-        if color == Color.BLACK:
-            super().__init__("pawn", Color.BLACK, start, start, b_pawn_image, False, 1)
+    def __init__(self, color, start, current=None):
+        if (current == None) or (current == start):
+            has_moved = False
+            current = start
         else:
-            super().__init__("pawn", Color.WHITE, start, start, w_pawn_image, False, 1)
+            has_moved = True
+        if color == Color.BLACK:
+            super().__init__("pawn", Color.BLACK, start, current, b_pawn_image, has_moved, 1)
+        else:
+            super().__init__("pawn", Color.WHITE, start, current, w_pawn_image, has_moved, 1)
 
     def get_seen_squares(self, board):
         seen_squares = []
@@ -357,16 +350,13 @@ class Pawn(Piece):
         possible_moves = []
         y, x = self.current
         direction = 1 if self.color == Color.BLACK else -1  # Forward based on color
-        print(f"Pawn seen squares: {seen_squares}")
         for move in seen_squares:
             if board[move[0]][move[1]]!= None and board[move[0]][move[1]].color != self.color:
                 possible_moves.append(move)
             elif board[move[0]][move[1]]== None and (y == 3 and self.color == Color.WHITE) or (y == 4 and self.color == Color.BLACK):
                 # En Passant
                 global history
-                print(f"History: {len(history)} {history}")
                 history_string = history[len(history)-1]
-                print(f"Testing En Passant: {history_string[13]} {history_string[23]} {history_string[16]}")
                 if "pawn" not in history_string:
                     continue
                 original_y = history_string[13]
@@ -444,14 +434,14 @@ def draw_buttons(surface, one_player, turn):
     pygame.draw.rect(surface, (0, 128, 0), new_game_rect)
     surface.blit(new_game_button, new_game_rect)
     # Toggle button
-    if one_player:
-        toggle_text = "1-Player"
-    else:
-        toggle_text = "2-Player"
-    toggle_button = font.render(toggle_text, True, white)
-    toggle_rect = toggle_button.get_rect(center=(screen_width - 100, 50))
-    pygame.draw.rect(surface, (0, 128, 0), toggle_rect)
-    surface.blit(toggle_button, toggle_rect)
+    #if one_player:
+        #toggle_text = "1-Player"
+    #else:
+    #toggle_text = "2-Player"
+    #toggle_button = font.render(toggle_text, True, white)
+    #toggle_rect = toggle_button.get_rect(center=(screen_width - 100, 50))
+    #pygame.draw.rect(surface, (0, 128, 0), toggle_rect)
+    #surface.blit(toggle_button, toggle_rect)
     # Undo button
     undo_text = "Undo Move"
     undo_button = font.render(undo_text, True, white)
@@ -472,6 +462,17 @@ def draw_highlighted_moves(surface, highlighted_moves):
         for move in highlighted_moves:
             y, x = move
             pygame.draw.circle(surface, red, (x * square_size + 25, y * square_size + 25), 5)
+def draw_end(surface, turn, end_game):
+    font = pygame.font.Font(None, 64)
+    if end_game == "Tie":
+        text = "Tie"
+    elif turn == Color.WHITE:
+        text = "Black Wins!"
+    else:
+        text = "White Wins!"
+    text_surface = font.render(text, True, red)
+    text_rect = text_surface.get_rect(midright=(screen_width - 250, 175))
+    surface.blit(text_surface, text_rect)
 def setup_initial_board():
     board = []
 
@@ -529,6 +530,17 @@ def toggle_color(color):
     if color == Color.WHITE:
         return Color.BLACK
     return Color.WHITE
+def check_end_game(board, color):
+    for x in range(8):
+        for y in range(8):
+            if board[y][x] != None and board[y][x].color == color:
+                last_x = x
+                last_y = y
+                if len(board[y][x].get_valid_moves(board))> 0:
+                    return None
+    if would_king_be_under_attack(board, (last_y, last_x), (last_y, last_x), color):
+        return "Win"
+    return "Tie"
 def main():
     # Initial setup
     board = setup_initial_board()
@@ -540,6 +552,7 @@ def main():
     print_board(board)
     draw_board(surface)
     draw_buttons(surface, one_player, turn)
+    end_game = None
 
     running = True
     while running:
@@ -549,7 +562,6 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button clicked
                 mouse_pos = pygame.mouse.get_pos()
                 selected_space = get_clicked_space(mouse_pos, board)
-                print(selected_space)
                 if selected_space == "New Game":
                     board = setup_initial_board()
                     turn = Color.WHITE
@@ -558,83 +570,151 @@ def main():
                     highlighted_moves = []
                     draw_board(surface)
                     draw_buttons(surface, one_player, turn)
+                    end_game = None
                     continue
                 elif selected_space == "Toggle Player":
-                    if one_player == False:
-                        one_player = True
-                    else:
-                        one_player = False
-                    draw_buttons(surface, one_player, turn)
-                elif selected_space == "Undo":
-                    # TODO: Undo
+                    #if one_player == False:
+                    #    one_player = True
+                    #else:
+                    #    one_player = False
+                    #draw_buttons(surface, one_player, turn)
                     continue
-                elif selected_space == None:
-                    #clicked on no buttons in the column
-                    continue
-                else:
-                    print("piece selected")
-                    if piece_selected_space != None:
-                        # Piece currently highlighted:
-                        # - - If selection is a valid move, move piece, flip turn.
-                        # - - clear selection, clear highlights
-                        print(f"Trying to move {piece_selected_space} to {selected_space}. {highlighted_moves} are allowed.")
-                        if highlighted_moves and selected_space in highlighted_moves:
-                            history_string = f"{piece_selected_space.color} {piece_selected_space.kind} from {piece_selected_space.current} to {selected_space}"
-                            castling = False
-                            en_passant = False
-                            if piece_selected_space.kind == "king" and (abs(piece_selected_space.current[1] - selected_space[1]) == 2):
-                                history_string = f"{history_string} castling"
-                                castling = True
-                            else: 
-                                if piece_selected_space.kind == "pawn" and board[selected_space[0]][selected_space[1]] == None and selected_space[1] != piece_selected_space.current[1]:
-                                    en_passant = True
-                                    history_string = f"{history_string} killing pawn"
-                                elif board[selected_space[0]][selected_space[1]] != None:
-                                    history_string = f"{history_string} killing {board[selected_space[0]][selected_space[1]].kind}"
-                            print(history_string)
-                            turn = toggle_color(turn)
-                            board[selected_space[0]][selected_space[1]] = piece_selected_space
-                            if castling:
-                                if selected_space[1] == 2:
-                                    board[selected_space[0]][3] = board[selected_space[0]][0]
-                                    board[selected_space[0]][0] = None
-                                    board[selected_space[0]][3].has_moved = True
-                                elif selected_space[1] == 6:
-                                    board[selected_space[0]][5] = board[selected_space[0]][7]
-                                    board[selected_space[0]][7] = None
-                                    board[selected_space[0]][5].has_moved = True
-                            elif en_passant:
-                                if piece_selected_space.color == Color.WHITE:
-                                    board[(selected_space[0]+1)][selected_space[1]] = None
+                elif end_game == None:
+                    if selected_space == "Undo":
+                        if len(history) < 1:
+                            continue
+                        history_string = history[len(history)-1]
+                        original_y = history_string[13]
+                        original_x = history_string[16]
+                        new_y = history_string[23]
+                        new_x = history_string[26]
+                        if not original_y.isdigit() or not new_y.isdigit() or not original_x.isdigit() or not new_x.isdigit():
+                            continue
+                        if "promotes" in history_string:
+                            if turn == Color.BLACK:
+                                start_y = 6
+                            else:
+                                start_y = 1
+                            board[int(original_y)][int(original_x)] = Pawn(toggle_color(turn), (start_y, int(original_x)), (int(original_y), int(original_x)))
+                        else:
+                            board[int(original_y)][int(original_x)] = board[int(new_y)][int(new_x)]
+                        board[int(original_y)][int(original_x)].current = (int(original_y), int(original_x))
+                        if "castling" in history_string:
+                            board[int(original_y)][int(original_x)].has_moved = False
+                            rook_color = toggle_color(turn)
+                            if int(new_x) == 6:
+                                board[int(new_y)][7] = Rook(rook_color, (int(new_y), 7))
+                                board[int(new_y)][6] = None
+                                board[int(new_y)][5] = None
+                            else:
+                                board[int(new_y)][0] = Rook(rook_color, (int(new_y), 0))
+                                board[int(new_y)][2] = None
+                                board[int(new_y)][3] = None
+                        elif "en passant" in history_string:
+                            piece_color = turn
+                            if piece_color == Color.BLACK:
+                                board[3][int(new_x)]=Pawn(piece_color, (1, int(new_x)), (3, int(new_x)))
+                            else:
+                                board[4][int(new_x)]=Pawn(piece_color, (6, int(new_x)), (4, int(new_x)))
+                            board[int(new_y)][int(new_x)] = None
+                        elif "killing" in history_string:
+                            piece_color = turn
+                            piece = history_string[-4:]
+                            if piece == "pawn":
+                                if piece_color == Color.BLACK:
+                                    start_y = 1
                                 else:
-                                    board[(selected_space[0]-1)][selected_space[1]] = None
-                            piece_selected_space.has_moved = True
-                            board[piece_selected_space.current[0]][piece_selected_space.current[1]] = None
-                            piece_selected_space.current = selected_space
-                            history.append(history_string)
-                            print(f"piece moved! New turn: {turn}")
-                        highlighted_moves = []
-                        piece_selected_space = None
-                        print("piece unselected")
+                                    start_y = 6
+                                board[int(new_y)][int(new_x)]=Pawn(piece_color, (start_y, int(new_x)), (int(new_y), int(new_x)))
+                            elif piece == "bish":
+                                board[int(new_y)][int(new_x)]=Bishop(piece_color, (int(new_y), int(new_x)))
+                            elif piece == "knig":
+                                board[int(new_y)][int(new_x)]=Knight(piece_color, (int(new_y), int(new_x)))
+                            elif piece == "rook":
+                                board[int(new_y)][int(new_x)]=Rook(piece_color, (int(new_y), int(new_x)))
+                            elif piece == "quee":
+                                board[int(new_y)][int(new_x)]=Queen(piece_color, (int(new_y), int(new_x)))
+                        else:
+                            board[int(new_y)][int(new_x)] = None
+                        turn = toggle_color(turn)
+                        del history[-1]
+                    elif selected_space == None:
+                        #clicked on no buttons in the column
+                        continue
                     else:
-                        # no piece currently highlighted:
-                        # - - If selection is a piece of the correct color, highlight possible moves, refresh board
-                        piece_selected_space = board[selected_space[0]][selected_space[1]]
-                        print(piece_selected_space)
                         if piece_selected_space != None:
-                            if piece_selected_space.color == turn:
-                                highlighted_moves = piece_selected_space.get_valid_moves(board)
-                                print(f"possible moves: {highlighted_moves}")
-                        if highlighted_moves == []:
+                            # Piece currently highlighted:
+                            # - - If selection is a valid move, move piece, flip turn.
+                            # - - clear selection, clear highlights
+                            print(f"Trying to move {piece_selected_space.kind} to {selected_space}. {highlighted_moves} are allowed.")
+                            if highlighted_moves and selected_space in highlighted_moves:
+                                history_string = f"{piece_selected_space.color} {piece_selected_space.kind} from {piece_selected_space.current} to {selected_space}"
+                                castling = False
+                                en_passant = False
+                                promotes = False
+                                if piece_selected_space.kind == "king" and (abs(piece_selected_space.current[1] - selected_space[1]) == 2):
+                                    history_string = f"{history_string} castling"
+                                    castling = True
+                                else: 
+                                    if piece_selected_space.kind == "pawn" and board[selected_space[0]][selected_space[1]] == None and selected_space[1] != piece_selected_space.current[1]:
+                                        en_passant = True
+                                        history_string = f"{history_string} en passant"
+                                    else:
+                                        if piece_selected_space.kind == "pawn" and (selected_space[0] == 0 or selected_space[0] == 7):
+                                            history_string = f"{history_string} promotes"
+                                            promotes = True
+                                        if board[selected_space[0]][selected_space[1]] != None:
+                                            history_string = f"{history_string} killing {board[selected_space[0]][selected_space[1]].kind}"
+                                turn = toggle_color(turn)
+                                board[selected_space[0]][selected_space[1]] = piece_selected_space
+                                if castling:
+                                    if selected_space[1] == 2:
+                                        board[selected_space[0]][3] = board[selected_space[0]][0]
+                                        board[selected_space[0]][0] = None
+                                        board[selected_space[0]][3].has_moved = True
+                                        board[selected_space[0]][3].current = (selected_space[0],3)
+                                    elif selected_space[1] == 6:
+                                        board[selected_space[0]][5] = board[selected_space[0]][7]
+                                        board[selected_space[0]][7] = None
+                                        board[selected_space[0]][5].has_moved = True
+                                        board[selected_space[0]][5].current = (selected_space[0],5)
+                                elif en_passant:
+                                    if piece_selected_space.color == Color.WHITE:
+                                        board[(selected_space[0]+1)][selected_space[1]] = None
+                                    else:
+                                        board[(selected_space[0]-1)][selected_space[1]] = None
+                                elif promotes:
+                                    board[selected_space[0]][selected_space[1]] = Queen(toggle_color(turn), (selected_space[0],selected_space[1]))
+                                piece_selected_space.has_moved = True
+                                board[piece_selected_space.current[0]][piece_selected_space.current[1]] = None
+                                piece_selected_space.current = selected_space
+                                history.append(history_string)
+                                # Check for end game or draw
+                                end_game = check_end_game(board, turn)
+                                if end_game:
+                                    print(f"GGs")
+                                    print(f"Game Over! {end_game}")
+                                else:
+                                    print(f"piece moved! New turn: {turn}")
+                            highlighted_moves = []
                             piece_selected_space = None
+                        else:
+                            # no piece currently highlighted:
+                            # - - If selection is a piece of the correct color, highlight possible moves, refresh board
+                            piece_selected_space = board[selected_space[0]][selected_space[1]]
+                            if piece_selected_space != None:
+                                if piece_selected_space.color == turn:
+                                    highlighted_moves = piece_selected_space.get_valid_moves(board)
+                            if highlighted_moves == []:
+                                piece_selected_space = None
 
-                    # - refresh board
-                    #continue
         draw_board(surface)
         draw_history(surface, history)
         draw_buttons(surface, one_player, turn)
         draw_pieces(surface, board)
         draw_highlighted_moves(surface, highlighted_moves)
+        if end_game != None:
+            draw_end(surface, turn, end_game)
         pygame.display.flip()
         # draw_pieces(surface, board)
         # screen.update()
