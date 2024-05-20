@@ -4,7 +4,10 @@
 The first line of each file should indicate how to run it from the command line.
 
 ### Chess in Python
-A functional 2-player point-and-click chess game using pygame
+A functional 2-player point-and-click chess game using pygame.
+
+### Boggle/Strands Solver
+Find all the words possible in a boggle/strands board entered from the command line row by row.
 
 ### Life Simulation in Ruby
 A randomized simulation of life and death for a population, where the strong prosper and disasters devastate. Here are a few sample output rounds:
