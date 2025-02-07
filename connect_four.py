@@ -1,3 +1,5 @@
+# To run: python3 connect_four.py
+
 import os
 import random
 
